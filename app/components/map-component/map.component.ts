@@ -3,74 +3,103 @@ import {topmost} from "ui/frame";
 import {Page} from "ui/page";
 var mapbox = require("nativescript-mapbox");
 var geolocation = require("nativescript-geolocation");
-import {InstagramService} from "../../services/instagram.service";
+import {FlickrService} from "../../services/flickr.service";
+import {MapBoxMarker} from "../../models/mapBoxMarker.model";
+import {Router, ActivatedRoute} from "@angular/router";
+
+const MAP_BOX_ACCESS_TOKEN: string = "sk.eyJ1IjoiYnVya2Vob2xsYW5kIiwiYSI6ImNpcXh3NXd3NDAxcDJmbG04M2FxNW5zc3YifQ.kVNHOX6UvgsTPS4BJebtLg" 
 
 @Component({
     selector: "MapComponent",
     template: "<StackLayout></StackLayout>",
-    providers: [InstagramService]
+    providers: [FlickrService]
 })
 export class MapComponent implements OnInit {
     
     latitude: number = 0;
     longitude: number = 0;
 
-    constructor(private instagramService: InstagramService) {
-        
-        // make sure we've got location permissions
+    constructor(private flickrService: FlickrService, private router: Router, private activatedRoute: ActivatedRoute) {
+        // make sure we've got location permissions, then load the map
         if (!geolocation.isEnabled()) {
-            geolocation.enableLocationRequest();
-        }
-
-        geolocation.getCurrentLocation()
-        .then((location) => {
-            this.latitude = location.latitude;
-            this.longitude = location.longitude;
-
-            this.showMap();
-
-            this.centerMap().then(() => {
-                setTimeout(() => {
-                    instagramService.search(this.latitude, this.longitude);
-                }, 1000);
+            geolocation.enableLocationRequest().then(() => {
+                this.loadMapWithLocation();
             });
-        });
+        }
+        else {
+            this.loadMapWithLocation();
+        }
     }
 
     ngOnInit() {
         let page = <Page>topmost().currentPage;
-        page.actionBarHidden = true;
+
+        // this is not good. this reloads the entire map and recenters it.
+        page.addEventListener("navigatedTo", () => {
+            this.loadMapWithLocation();
+        })
+    }
+
+    loadMapWithLocation() {
+        geolocation.getCurrentLocation({ timeout: 20000 })
+        .then((location) => {
+
+            this.latitude = location.latitude;
+            this.longitude = location.longitude;
+
+            this.showMap();
+                
+            this.flickrService.photosSearch(this.latitude, this.longitude).subscribe(
+                data => {
+                    // map flickr response to map box markers
+                    let markers = data.map(element => {
+                        let marker = new MapBoxMarker();
+                        marker.id = element.id;
+                        marker.owner = element.owner;
+                        marker.lat = element.latitude;
+                        marker.lng = element.longitude;
+                        marker.title = element.title;
+                        marker.thumbnail = element.url_t;
+
+                        marker.onCalloutTap = () => {
+                            // the maps appear to be "always on top". we have to hide them
+                            // in order for the next view to even appear. is this the only way?"
+                            mapbox.hide();
+                            this.router.navigate([`/images-list/${marker.owner}`]);
+                        }
+
+                        return marker;
+                    });
+
+                    this.addMarkers(markers);
+                }
+            );
+        });
     }
 
     showMap() {
         mapbox.show({
-            accessToken: "sk.eyJ1IjoiYnVya2Vob2xsYW5kIiwiYSI6ImNpcXh3NXd3NDAxcDJmbG04M2FxNW5zc3YifQ.kVNHOX6UvgsTPS4BJebtLg",
+            accessToken: MAP_BOX_ACCESS_TOKEN,
             style: mapbox.MapStyle.OUTDOORS,
             hideLogo: true,
             hideCmopass: true,
             showUserLocation: true,
-            zoomLevel: 10
+            center: {
+                lat: this.latitude,
+                lng: this.longitude
+            },
+            zoomLevel: 18
         });
     }
 
     centerMap() {
-
-        console.log(`centering map on lat: ${this.latitude} and lng:${this.longitude}`)
-
         return mapbox.setCenter({
             lat: this.latitude,
             lng: this.longitude
         });
     }
 
-    addMarkers() {
-
-        let cats: Array<any> = [
-            { lat: 35.9240970, lng: -86.8715860, iconPath: "http://placekitten.com/25", title: "Starbucks", subtitle: "Coffee" },
-             { lat: 35.9319340, lng: -86.8763220, iconPath: "http://placekitten.com/25", title: "CVS", subtitle: "Pharmacy" },
-            { lat: 35.9464880, lng: -86.8798870, iconPath: "http://placekitten.com/25", title: "Casual Pint", subtitle: "Beer" }
-        ]
-
-        mapbox.addMarkers(cats );
+    addMarkers(photos: any) {
+        mapbox.addMarkers(photos);
     }
 }

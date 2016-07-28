@@ -1,0 +1,7 @@
+<GridLayout rows="*" columns="*" backgroundColor="blue">
+    <ListView [items]="photos" row="0">
+        <template let-item="item">
+            <Label [text]="item.title"></Label>
+        </template>
+    </ListView>
+</GridLayout>

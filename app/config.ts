@@ -1,4 +1,4 @@
-import * as appSettings from "application-settings";
+// import * as appSettings from "application-settings";
 
 export class Instagram {
     static authURL: string = "https://api.instagram.com/oauth/authorize/";
@@ -7,10 +7,16 @@ export class Instagram {
     static redirectUri: string = "https://www.ng-book.com";
 
     static set accessToken(value) {
-        appSettings.setString("instagram.accessToken", value);
+        // appSettings.setString("instagram.accessToken", value);
     } 
 
     static get accessToken(): string {
-        return appSettings.getString("instagram.accessToken");
+        return null;
+        // return appSettings.getString("instagram.accessToken");
     }
+}
+
+export class Flickr {
+    static clientId: string = "b8241dc9b98813054de12ebfc7784321";
+    static apiUrl: string = "https://api.flickr.com/services/rest/?";
 }

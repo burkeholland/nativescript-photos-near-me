@@ -12,16 +12,24 @@ export class InstagramService {
     }
 
     search(lat: number, lng: number) {
-        this.http.get(`${this.url}?lat=${lat}&lng=${lng}&access_token=${Instagram.accessToken}`)
+
+        var url = `${this.url}?lat=${lat}&lng=${lng}&access_token=${Instagram.accessToken}&distance=5000`;
+
+        console.log(`Search Request: ${url}`);
+
+        this.http.get(url)
             .map(this.extractData)
             .subscribe(
-                data => console.log(data),
-                err => console.log(err)
+                err => {
+                    if (err) {
+                        console.log(err);
+                    }
+                }
             );
     }
 
     private extractData(res: Response) {
-        console.log(res.text);
+        console.log(res.json());
     }
 
     private handleError() {

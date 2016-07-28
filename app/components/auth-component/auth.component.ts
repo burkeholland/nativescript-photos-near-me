@@ -9,7 +9,7 @@ var url = require("url");
     template: "<WebView url='{{ authUrl }}' #webview (loadStarted)='loadStarted(webview)' width='*' height='*'></WebView>"
 })
 export class AuthComponent {
-    authUrl: string = `${Instagram.authURL}?client_id=${Instagram.clientId}&redirect_uri=${Instagram.redirectUri}&response_type=token` 
+    authUrl: string = `${Instagram.authURL}?client_id=${Instagram.clientId}&redirect_uri=${Instagram.redirectUri}&response_type=token&scope=public_content`; 
 
     constructor(private router: Router, private http: Http) {}
 
