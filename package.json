@@ -24,7 +24,7 @@
     "@angular/router-deprecated": "2.0.0-rc.2",
     "nativescript-angular": "0.2.0",
     "nativescript-geolocation": "0.0.12",
-    "nativescript-mapbox": "file:../nativescript-mapbox",
+    "nativescript-mapbox": "^1.3.0",
     "tns-core-modules": "^2.1.0"
   },
   "devDependencies": {

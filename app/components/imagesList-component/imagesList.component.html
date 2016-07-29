@@ -1,7 +1,23 @@
-<GridLayout rows="*" columns="*" backgroundColor="blue">
-    <ListView [items]="photos" row="0">
+<GridLayout columns="*" rows="*">
+  <ListView [items]="photos" row="0">
         <template let-item="item">
-            <Label [text]="item.title"></Label>
+            <GridLayout columns="*" rows="20, *">
+                <Label [text]="item.title" row="0"></Label>
+                <Image [src]="item.url_m" row="1" width="400" height="400"></Image>
+            </GridLayout>
         </template>
     </ListView>
 </GridLayout>
+
+<!--<ListView [items]="photos" row="0">
+        <template let-item="item">
+            <Label [text]="item.title"></Label>
+        </template>
+    </ListView>-->
+    <!--<StackLayout>
+        <Label text="this is a label that should just show up"></Label>
+        <StackLayout *ngFor="let photo of photos" backgroundColor="blue">
+            <Label [text]="photo.title"></Label>    
+        </StackLayout>
+    </StackLayout>-->
+    
