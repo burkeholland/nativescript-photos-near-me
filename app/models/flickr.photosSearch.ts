@@ -1,4 +1,4 @@
-export class FlickrResponseModel {
+export class FlickrPhotosSearchModel {
     id: number;
     owner: string;
     secret: string;
@@ -8,4 +8,6 @@ export class FlickrResponseModel {
     longitude: number;
     url_t: string;
     url_m: string;
+    url_q: string;
+    url_n: string;
 }

@@ -1,14 +1,22 @@
-<GridLayout columns="*" rows="*">
-  <ListView [items]="photos" row="0">
-        <template let-item="item">
-            <GridLayout columns="*" rows="20, *">
-                <Label [text]="item.title" row="0"></Label>
-                <Image [src]="item.url_m" row="1" width="400" height="400"></Image>
-            </GridLayout>
-        </template>
-    </ListView>
+<GridLayout>
+    <Progress minValue="0" maxValue="100" [value]="progress" class="color-accent" backgroundColor="white"></Progress>
+    <GridLayout columns="*" rows="50, *" class="padding">
+        <StackLayout row="0">
+            <Label class="h2" [text]="userInfo.realname"></Label>
+        </StackLayout>
+        <GridLayout columns="*" rows="*" row="1">
+            <ListView [items]="photos" row="0" class="listview">
+                <template let-item="item">
+                <StackLayout width="320">
+                        <Label [text]="item.title" class="h4" textWrap="true"></Label>
+                        <Label [text]="'Taken by ' + userInfo.realname + ' on '" class="p"></Label>
+                        <Image [src]="item.url_n" width="320" height="320"></Image>
+                </StackLayout>
+                </template>
+            </ListView>
+        </GridLayout>
+    </GridLayout>
 </GridLayout>
-
 <!--<ListView [items]="photos" row="0">
         <template let-item="item">
             <Label [text]="item.title"></Label>
