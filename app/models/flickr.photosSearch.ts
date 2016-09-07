@@ -6,6 +6,7 @@ export class FlickrPhotosSearchModel {
     title: string;
     latitude: number;
     longitude: number;
+    datetaken: string;
     url_t: string;
     url_m: string;
     url_q: string;

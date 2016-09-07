@@ -3,4 +3,8 @@ export class FlickrUserInfoModel {
     realname: string;
     location: string;
     firstdatetaken: string;
+
+    constructor() {
+        this.realname = " ";
+    }
 }

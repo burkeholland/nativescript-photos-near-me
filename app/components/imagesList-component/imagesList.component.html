@@ -1,6 +1,7 @@
 <GridLayout>
+    <ActionBar title="Photos" class="action-bar-light"></ActionBar>
     <Progress minValue="0" maxValue="100" [value]="progress" class="color-accent" backgroundColor="white"></Progress>
-    <GridLayout columns="*" rows="50, *" class="padding">
+    <GridLayout columns="*" rows="55, *" class="padding">
         <StackLayout row="0">
             <Label class="h2" [text]="userInfo.realname"></Label>
         </StackLayout>
@@ -9,7 +10,7 @@
                 <template let-item="item">
                 <StackLayout width="320">
                         <Label [text]="item.title" class="h4" textWrap="true"></Label>
-                        <Label [text]="'Taken by ' + userInfo.realname + ' on '" class="p"></Label>
+                        <Label [text]="'Taken ' + item.datetaken" class="p"></Label>
                         <Image [src]="item.url_n" width="320" height="320"></Image>
                 </StackLayout>
                 </template>

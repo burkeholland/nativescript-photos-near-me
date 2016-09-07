@@ -20,11 +20,13 @@ export class FlickrService {
         let url = `${Flickr.apiUrl}method=flickr.photos.search&api_key=${Flickr.clientId}&content_type=1`;
         
         if (lon) {
-            url = `${url}&lat=${userIdOrLat}&lon=${lon}&format=json&nojsoncallback=1&extras=url_t,geo`;
+            url = `${url}&lat=${userIdOrLat}&lon=${lon}&extras=url_t,geo`;
         }
         else {
-            url = `${url}&user_id=${userIdOrLat}&format=json&nojsoncallback=1&extras=url_n`;
+            url = `${url}&user_id=${userIdOrLat}&extras=url_n,date_taken`;
         }
+
+        url = `${url}&format=json&nojsoncallback=1`;
 
         return new Promise(resolve => { 
             this.http.get(url)

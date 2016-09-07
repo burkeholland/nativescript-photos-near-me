@@ -23,11 +23,8 @@ export class ImagesListComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.userInfo = new FlickrUserInfoModel();
-        this.userInfo.realname = "Burke Holland"
-
         this.activatedRoute.params.subscribe(params => {
-            this.userId = "25957759@N00"; // params["user_id"];
+            this.userId = params["user_id"];
             this.loadUserInfo();
             this.updateProgress(20);
         });
@@ -36,8 +33,9 @@ export class ImagesListComponent implements OnInit {
     loadUserInfo() {
         this.flickrService.getUserInfo(this.userId)
             .then((userInfo: FlickrUserInfoModel) => {
-                this.userInfo = userInfo;
                 
+                this.userInfo = userInfo;
+
                 this.updateProgress(50);
                 
                 this.loadListView();
@@ -48,7 +46,7 @@ export class ImagesListComponent implements OnInit {
     loadListView() {
         this.flickrService.photosSearch(this.userId)
             .then(photos => {
-                
+
                 this.photos = photos;
                 
                 this.updateProgress(100);

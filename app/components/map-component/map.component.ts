@@ -27,8 +27,8 @@ export class MapComponent implements OnInit {
 
         // this is not good. this reloads the entire map and recenters it.
         page.addEventListener("navigatedTo", () => {
-            this.loadMapWithLocation();
-        })
+            mapbox.unhide();
+        });
 
         // make sure we've got location permissions, then load the map
         if (!geolocation.isEnabled()) {
@@ -82,7 +82,6 @@ export class MapComponent implements OnInit {
             accessToken: MAP_BOX_ACCESS_TOKEN,
             style: mapbox.MapStyle.OUTDOORS,
             hideLogo: true,
-            hideCmopass: true,
             showUserLocation: true,
             center: {
                 lat: this.latitude,
