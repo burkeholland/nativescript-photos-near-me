@@ -1,68 +1,103 @@
-import {Component, OnInit, NgZone} from "@angular/core";
-import {FlickrService} from "../../services/flickr.service";
-import {ActivatedRoute} from "@angular/router";
-import {FlickrPhotosSearchModel} from "../../models/flickr.photosSearch";
-import {FlickrUserInfoModel} from "../../models/flickr.userInfo";
-import {Observable} from "rxjs/Observable";
-import {Subject} from "rxjs/Subject";
+import { Component, OnInit, NgZone } from "@angular/core";
+import { FlickrService } from "../../services/flickr.service";
+import { PhotosSearchResponse } from "../../models/photosSearchResponse";
+import { RouterExtensions } from "nativescript-angular/router";
+import { Router, NavigationEnd} from "@angular/router";
+import { GeolocationService } from "../../services/geolocation.service";
+import { Observable } from "rxjs/Observable";
+import { Config } from "../../config";
+
+var mapbox = require("nativescript-mapbox");
 
 @Component({
     selector: "ImagesListComponent",
     templateUrl: "components/imagesList-component/imagesList.component.html",
-    providers: [FlickrService],
-    styleUrls: ["components/imagesList-component/imagesList.component.css"]
+    providers: [ FlickrService, GeolocationService ]
 })
 export class ImagesListComponent implements OnInit {
     
-    photos: Array<FlickrPhotosSearchModel>;
-    userId: string;
-    userInfo: FlickrUserInfoModel = new FlickrUserInfoModel();
+    photos: PhotosSearchResponse[];
     progress: number = 0;
 
-    constructor(private flickrService: FlickrService, private activatedRoute: ActivatedRoute, private zone: NgZone) {         
-    }
+    constructor(private flickrService: FlickrService, private routerExtensions: RouterExtensions, private geolocationService: GeolocationService, private zone: NgZone, private router: Router) {
+        this.router.events.subscribe(event => {
+            if (event instanceof NavigationEnd) {
+                if (event.url == "/") {
+                    mapbox.unhide();
+                }
+            }
+        });
+     }
 
     ngOnInit() {
-        this.activatedRoute.params.subscribe(params => {
-            this.userId = params["user_id"];
-            this.loadUserInfo();
-            this.updateProgress(20);
+        this.geolocationService.getLocation().then(() => {
+            this.loadPhotos().subscribe(
+                photos => {
+                    this.photos = photos.map((photo) => {
+                        photo.distance = this.geolocationService.getDistanceFrom(photo.latitude, photo.longitude);  
+                        return photo;
+                    });
+
+                    this.loadMap();
+                    this.dropMarkers();
+                },
+                error => console.log(error));
+            });
+    }
+
+    loadMap() {
+        mapbox.show({
+            accessToken: Config.MapBox.ACCESS_TOKEN,
+            style: mapbox.MapStyle.OUTDOORS,
+            hideLogo: true,
+            showUserLocation: true,
+            margins: {
+                top: 365
+            },
+            center: {
+                lat: this.geolocationService.latitude,
+                lng: this.geolocationService.longitude
+            },
+            zoomLevel: 17
         });
     }
 
-    loadUserInfo() {
-        this.flickrService.getUserInfo(this.userId)
-            .then((userInfo: FlickrUserInfoModel) => {
-                
-                this.userInfo = userInfo;
+    dropMarkers() {
+        let markers = this.photos.map((photo: PhotosSearchResponse, index: number) => {
+            return {
+                lat: photo.latitude,
+                lng: photo.longitude,
+                onTap: () => {
+                    // the maps appear to be "always on top". we have to hide them
+                    // in order for the next view to even appear. is this the only way?"
+                    this.zone.run(() => {
+                        this.showPhoto({ index: index });
+                    });
+                }
+            }
+        });
 
-                this.updateProgress(50);
-                
-                this.loadListView();
-            })
-            .catch(error => console.log(error));
+        mapbox.addMarkers(markers);
     }
 
-    loadListView() {
-        this.flickrService.photosSearch(this.userId)
-            .then(photos => {
-
-                this.photos = photos;
-                
-                this.updateProgress(100);
-            })
-            .catch(error => console.log(error));
+    centerMap(args: any) {
+        let photo = this.photos[args.index];
+        mapbox.setCenter({
+            lat: photo.latitude,
+            lng: photo.longitude,
+            animated: true
+        });
     }
 
-    updateProgress(value: number) {
-        if (value < 100) {
-            this.progress = value;
-        }
-        else {
-            this.progress = 100;
-            setTimeout(() => {
-                this.progress = 0;
-            }, 500);
-        }
+    showPhoto(args: any) {
+        let photo = this.photos[args.index];
+        mapbox.hide();
+        this.routerExtensions.navigate([`/image-component/${photo.id}/${photo.owner}`]);
+    }
+
+    loadPhotos() {
+        return this.flickrService.photosSearch(this.geolocationService.latitude, this.geolocationService.longitude);
     }
 }
+
+

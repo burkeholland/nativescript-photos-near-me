@@ -1,4 +1,6 @@
-﻿.background-color-light {
+﻿@import '~/css/core.light.css'; 
+
+/*.background-color-light {
   background-color: #ffffff; }
 
 .background-color-accent {
@@ -326,4 +328,4 @@ textfield {
 
 .debug {
   border-width: 1;
-  border-color: red; }
+  border-color: red; }*/

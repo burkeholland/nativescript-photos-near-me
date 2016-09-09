@@ -22,6 +22,7 @@
     "nativescript-angular": "^0.3.0",
     "nativescript-geolocation": "0.0.12",
     "nativescript-mapbox": "^1.4.0",
+    "nativescript-theme-core": "0.0.5",
     "tns-core-modules": "^2.2.0"
   },
   "devDependencies": {

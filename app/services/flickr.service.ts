@@ -1,62 +1,36 @@
-import {Component, Injectable} from "@angular/core";
-import {Http, Response} from "@angular/http";
-import {Flickr} from "../config";
-import {Observable} from "rxjs/Observable";
-import 'rxjs/add/operator/toPromise';
-import 'rxjs/add/operator/catch'
-
-import {FlickrUserInfoModel} from '../models/flickr.userInfo';
+import { Component, Injectable } from "@angular/core";
+import { Http, Response } from "@angular/http";
+import { Observable } from "rxjs/Observable";
+import { Config } from "../config";
+import { PhotosSearchResponse } from "../models/photosSearchResponse";
+import { GetInfoResponse } from '../models/getInfoResponse';
 
 @Injectable()
 export class FlickrService {
 
     constructor(private http: Http) {}
 
-    // overloading methods in typescript is, um, interesting...
-    photosSearch(userId: string);
-    photosSearch(lat: number, lon: number);
-
-    photosSearch(userIdOrLat: any, lon?: number) {
-        let url = `${Flickr.apiUrl}method=flickr.photos.search&api_key=${Flickr.clientId}&content_type=1`;
+    photosSearch(lat: number, lon: number): Observable<PhotosSearchResponse[]> {
+        let url = `${Config.Flickr.API_URL}method=flickr.photos.search&api_key=${Config.Flickr.CLIENT_ID}&content_type=1&lat=${lat}&lon=${lon}&extras=url_q,geo&format=json&nojsoncallback=1`;
         
-        if (lon) {
-            url = `${url}&lat=${userIdOrLat}&lon=${lon}&extras=url_t,geo`;
-        }
-        else {
-            url = `${url}&user_id=${userIdOrLat}&extras=url_n,date_taken`;
-        }
-
-        url = `${url}&format=json&nojsoncallback=1`;
-
-        return new Promise(resolve => { 
-            this.http.get(url)
-            .toPromise()
-            .then(response => resolve(response.json().photos.photo)) 
+        return this.http.get(url)
+            .map(response => { return response.json().photos.photo })
             .catch(this.handleError);
-        });
+    }
+
+    getPhotoInfo(photoId: number): Observable<GetInfoResponse> {
+        let url = `${Config.Flickr.API_URL}method=flickr.photos.getInfo&api_key=${Config.Flickr.CLIENT_ID}&photo_id=${photoId}&format=json&nojsoncallback=1`;
+
+        return this.http.get(url)
+            .map(response => { 
+                let photo = response.json().photo;
+                return photo; 
+            })
+            .catch(this.handleError);
     }
 
     handleError(error: Response) {
         console.log(error);
-    }
-
-    getUserInfo(userId: string) {
-        let url = `${Flickr.apiUrl}method=flickr.people.getInfo&api_key=${Flickr.clientId}&user_id=${userId}&format=json&nojsoncallback=1`;
-        return new Promise(resolve => {
-            this.http.get(url)
-                .toPromise()
-                .then(response => {
-                    let person = response.json().person;
-                    let userInfo = new FlickrUserInfoModel();
-
-                    userInfo.realname = person.realname._content;
-                    userInfo.username = person.username._content;
-                    userInfo.location = person.location._content;
-                    userInfo.firstdatetaken = person.photos.firstdatetaken._content;
-                    
-                    resolve(userInfo);
-                })
-                .catch(this.handleError);
-        });
+        return Observable.throw(error);
     }
 }

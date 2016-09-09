@@ -1,32 +1,16 @@
-<GridLayout>
-    <ActionBar title="Photos" class="action-bar-light"></ActionBar>
-    <Progress minValue="0" maxValue="100" [value]="progress" class="color-accent" backgroundColor="white"></Progress>
-    <GridLayout columns="*" rows="55, *" class="padding">
-        <StackLayout row="0">
-            <Label class="h2" [text]="userInfo.realname"></Label>
-        </StackLayout>
-        <GridLayout columns="*" rows="*" row="1">
-            <ListView [items]="photos" row="0" class="listview">
-                <template let-item="item">
-                <StackLayout width="320">
-                        <Label [text]="item.title" class="h4" textWrap="true"></Label>
-                        <Label [text]="'Taken ' + item.datetaken" class="p"></Label>
-                        <Image [src]="item.url_n" width="320" height="320"></Image>
-                </StackLayout>
-                </template>
-            </ListView>
-        </GridLayout>
+<ActionBar title="Photos" class="action-bar"></ActionBar>
+<StackLayout>
+    <GridLayout columns="*" rows="*" row="1" height="300">
+        <ListView [items]="photos" row="0" class="list-group" (itemTap)="centerMap($event)">
+            <template let-item="item">
+                <GridLayout columns="auto, *" rows="auto" class="list-group-item">
+                    <Image [src]="item.url_q" width="50" height="50" col="0" class="thumb img-rounded"></Image>
+                    <StackLayout row="0" col="1">
+                        <Label [text]="item.distance + ' away'" class="list-group-item-heading"></Label>
+                        <Label [text]="item.title" class="list-group-item-text" textWrap="true"></Label>
+                    </StackLayout>
+                </GridLayout>
+            </template>
+        </ListView>
     </GridLayout>
-</GridLayout>
-<!--<ListView [items]="photos" row="0">
-        <template let-item="item">
-            <Label [text]="item.title"></Label>
-        </template>
-    </ListView>-->
-    <!--<StackLayout>
-        <Label text="this is a label that should just show up"></Label>
-        <StackLayout *ngFor="let photo of photos" backgroundColor="blue">
-            <Label [text]="photo.title"></Label>    
-        </StackLayout>
-    </StackLayout>-->
-    
+</StackLayout>
