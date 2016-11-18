@@ -1,9 +1,10 @@
 import { Component, Injectable } from "@angular/core";
 import { Http, Response } from "@angular/http";
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs/Rx";
 import { Config } from "../config";
 import { PhotosSearchResponse } from "../models/photosSearchResponse";
 import { GetInfoResponse } from '../models/getInfoResponse';
+import "rxjs/add/operator/map";
 
 @Injectable()
 export class FlickrService {
