@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from "@angular/core";
+import { Component, NgZone } from "@angular/core";
 import { FlickrService } from "../../services/flickr.service";
 import { PhotosSearchResponse } from "../../models/photosSearchResponse";
 import { RouterExtensions } from "nativescript-angular/router";
@@ -7,62 +7,43 @@ import { GeolocationService } from "../../services/geolocation.service";
 import { Observable } from "rxjs/Observable";
 import { Config } from "../../config";
 
-var mapbox = require("nativescript-mapbox");
-
 @Component({
     selector: "ImagesListComponent",
     templateUrl: "components/imagesList-component/imagesList.component.html",
     providers: [ FlickrService, GeolocationService ]
 })
-export class ImagesListComponent implements OnInit {
-    
-    photos: PhotosSearchResponse[];
-    progress: number = 0;
+export class ImagesListComponent {
+
+    private mapbox: any;
+    public mapboxKey: string;
+    public photos: PhotosSearchResponse[];
+    public progress: number = 0;
 
     constructor(private flickrService: FlickrService, private routerExtensions: RouterExtensions, private geolocationService: GeolocationService, private zone: NgZone, private router: Router) {
-        this.router.events.subscribe(event => {
-            if (event instanceof NavigationEnd) {
-                if (event.url == "/") {
-                    mapbox.unhide();
-                }
-            }
-        });
-     }
+        this.mapboxKey = Config.MapBox.ACCESS_TOKEN;
+    }
 
-    ngOnInit() {
+    public onMapReady(args) {
+        this.mapbox = args.map;
         this.geolocationService.getLocation().then(() => {
             this.loadPhotos().subscribe(
                 photos => {
                     this.photos = photos.map((photo) => {
-                        photo.distance = this.geolocationService.getDistanceFrom(photo.latitude, photo.longitude);  
+                        photo.distance = this.geolocationService.getDistanceFrom(photo.latitude, photo.longitude);
                         return photo;
                     });
-
-                    this.loadMap();
                     this.dropMarkers();
+                    this.mapbox.setCenter({
+                        lat: this.geolocationService.latitude,
+                        lng: this.geolocationService.longitude,
+                        animated: true
+                    });
                 },
                 error => console.log(error));
             });
     }
 
-    loadMap() {
-        mapbox.show({
-            accessToken: Config.MapBox.ACCESS_TOKEN,
-            style: mapbox.MapStyle.OUTDOORS,
-            hideLogo: true,
-            showUserLocation: true,
-            margins: {
-                top: 365
-            },
-            center: {
-                lat: this.geolocationService.latitude,
-                lng: this.geolocationService.longitude
-            },
-            zoomLevel: 17
-        });
-    }
-
-    dropMarkers() {
+    public dropMarkers() {
         let markers = this.photos.map((photo: PhotosSearchResponse, index: number) => {
             return {
                 lat: photo.latitude,
@@ -76,28 +57,26 @@ export class ImagesListComponent implements OnInit {
                 }
             }
         });
-
-        mapbox.addMarkers(markers);
+        this.mapbox.addMarkers(markers);
     }
 
-    centerMap(args: any) {
+    public centerMap(args: any) {
         let photo = this.photos[args.index];
-        mapbox.setCenter({
+        this.mapbox.setCenter({
             lat: photo.latitude,
             lng: photo.longitude,
             animated: true
         });
     }
 
-    showPhoto(args: any) {
+    public showPhoto(args: any) {
         let photo = this.photos[args.index];
-        mapbox.hide();
         this.routerExtensions.navigate([`/image-component/${photo.id}/${photo.owner}`]);
     }
 
-    loadPhotos() {
+    public loadPhotos() {
         return this.flickrService.photosSearch(this.geolocationService.latitude, this.geolocationService.longitude);
     }
-}
 
+}
 

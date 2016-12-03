@@ -1,5 +1,3 @@
-// import * as appSettings from "application-settings";
-
 export var Config = {
     Flickr: {
         CLIENT_ID: "b8241dc9b98813054de12ebfc7784321",

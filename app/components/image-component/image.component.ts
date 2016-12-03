@@ -8,14 +8,12 @@ import { GetInfoResponse } from "../../models/getInfoResponse";
     providers: [ FlickrService, GetInfoResponse ]
 })
 export class ImageComponent implements OnInit {
-    
-    url: string;
 
-    photo: GetInfoResponse = new GetInfoResponse();
+    public url: string;
 
-    constructor(private activatedRoute: ActivatedRoute, private flickrService: FlickrService) {}
+    public constructor(private activatedRoute: ActivatedRoute, private flickrService: FlickrService) { }
 
-    ngOnInit() {
+    public ngOnInit() {
         this.activatedRoute.params.subscribe(params => {
             let userId = params["user_id"];
             let photoId = params["photo_id"];
@@ -24,13 +22,12 @@ export class ImageComponent implements OnInit {
         });
     }
 
-    getPhoto(photoId: number) {
+    public getPhoto(photoId: number) {
         this.flickrService.getPhotoInfo(photoId).subscribe(
             photo => {
-                // this.photo = photo;
                 this.url = `https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}_n.jpg`;
             },
             error => console.log(error)
         );
-    } 
+    }
 }
