@@ -1,6 +1,6 @@
 <ActionBar title="Photos" class="action-bar"></ActionBar>
 <StackLayout>
-    <GridLayout columns="*" rows="300, *">
+    <GridLayout columns="*" rows="*, 200">
         <ListView [items]="photos" row="0" col="0" class="list-group" (itemTap)="centerMap($event)">
             <template let-item="item">
                 <GridLayout columns="auto, *" rows="auto" class="list-group-item">

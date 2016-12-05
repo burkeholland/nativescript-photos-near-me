@@ -1,11 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { FlickrService } from "../../services/flickr.service";
-import { GetInfoResponse } from "../../models/getInfoResponse";
 
 @Component({
-    templateUrl: "components/image-component/image.component.html",
-    providers: [ FlickrService, GetInfoResponse ]
+    templateUrl: "components/image-component/image.component.html"
 })
 export class ImageComponent implements OnInit {
 

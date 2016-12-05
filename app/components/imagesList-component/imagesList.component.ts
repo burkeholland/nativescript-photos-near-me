@@ -9,8 +9,7 @@ import { Config } from "../../config";
 
 @Component({
     selector: "ImagesListComponent",
-    templateUrl: "components/imagesList-component/imagesList.component.html",
-    providers: [ FlickrService, GeolocationService ]
+    templateUrl: "components/imagesList-component/imagesList.component.html"
 })
 export class ImagesListComponent {
 

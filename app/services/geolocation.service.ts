@@ -1,17 +1,16 @@
 import { Injectable } from "@angular/core";
-let geolocation = require("nativescript-geolocation");
-let humanizeDistance = require("humanize-distance");
+var geolocation = require("nativescript-geolocation");
+var humanizeDistance = require("humanize-distance");
 
 @Injectable()
 export class GeolocationService {
 
-    latitude: number;
-    longitude: number;
+    public latitude: number;
+    public longitude: number;
 
-    getLocation(): Promise<any> {
+    public getLocation(): Promise<any> {
         return new Promise(
             (resolve, reject) => {
-                // make sure we've got location permissions, then load the map
                 if (!geolocation.isEnabled()) {
                     geolocation.enableLocationRequest().then(() => {
                         resolve(this._getCurrentLocation());
@@ -21,10 +20,10 @@ export class GeolocationService {
                     resolve(this._getCurrentLocation());
                 }
             }
-        )
+        );
     }
 
-    getDistanceFrom(latitude: number, longitude: number): string {
+    public getDistanceFrom(latitude: number, longitude: number): string {
         return humanizeDistance({ latitude: latitude, longitude: longitude }, { latitude: this.latitude, longitude: this.longitude }, 'en-US', 'us');
     }
 
@@ -43,7 +42,7 @@ export class GeolocationService {
                     reject(error);
                 })
             }
-        )
-        
+        );
     }
+
 }
