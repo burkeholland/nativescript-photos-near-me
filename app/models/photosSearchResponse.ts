@@ -4,8 +4,8 @@ export class PhotosSearchResponse {
     secret: string;
     server: number;
     title: string;
-    latitude: number;
-    longitude: number;
+    latitude: string;
+    longitude: string;
     datetaken: string;
     url_t: string;
     url_m: string;

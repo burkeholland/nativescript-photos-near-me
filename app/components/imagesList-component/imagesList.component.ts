@@ -28,7 +28,9 @@ export class ImagesListComponent {
             this.loadPhotos().subscribe(
                 photos => {
                     this.photos = photos.map((photo) => {
-                        photo.distance = this.geolocationService.getDistanceFrom(photo.latitude, photo.longitude);
+                        photo.distance = this.geolocationService.getDistanceFrom(
+                            parseFloat(photo.latitude),
+                            parseFloat(photo.longitude));
                         return photo;
                     });
                     this.dropMarkers();
@@ -48,8 +50,6 @@ export class ImagesListComponent {
                 lat: photo.latitude,
                 lng: photo.longitude,
                 onTap: () => {
-                    // the maps appear to be "always on top". we have to hide them
-                    // in order for the next view to even appear. is this the only way?"
                     this.zone.run(() => {
                         this.showPhoto({ index: index });
                     });
@@ -62,9 +62,9 @@ export class ImagesListComponent {
     public centerMap(args: any) {
         let photo = this.photos[args.index];
         this.mapbox.setCenter({
-            lat: photo.latitude,
-            lng: photo.longitude,
-            animated: true
+            lat: parseFloat(photo.latitude),
+            lng: parseFloat(photo.longitude),
+            animated: false
         });
     }
 
