@@ -1,10 +1,8 @@
 import { Component, NgZone } from "@angular/core";
 import { FlickrService } from "../../services/flickr.service";
 import { PhotosSearchResponse } from "../../models/photosSearchResponse";
-import { RouterExtensions } from "nativescript-angular/router";
-import { Router, NavigationEnd} from "@angular/router";
+import { Router } from "@angular/router";
 import { GeolocationService } from "../../services/geolocation.service";
-import { Observable } from "rxjs/Observable";
 import { Config } from "../../config";
 
 @Component({
@@ -18,7 +16,7 @@ export class ImagesListComponent {
     public photos: PhotosSearchResponse[];
     public progress: number = 0;
 
-    constructor(private flickrService: FlickrService, private routerExtensions: RouterExtensions, private geolocationService: GeolocationService, private zone: NgZone, private router: Router) {
+    constructor(private flickrService: FlickrService, private geolocationService: GeolocationService, private zone: NgZone, private router: Router) {
         this.mapboxKey = Config.MapBox.ACCESS_TOKEN;
     }
 
@@ -70,7 +68,7 @@ export class ImagesListComponent {
 
     public showPhoto(args: any) {
         let photo = this.photos[args.index];
-        this.routerExtensions.navigate([`/image-component/${photo.id}/${photo.owner}`]);
+        this.router.navigate(["/image-component", photo.id, photo.owner]);
     }
 
     public loadPhotos() {

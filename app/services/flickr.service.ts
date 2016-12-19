@@ -16,7 +16,7 @@ export class FlickrService {
 
         return this.http.get(url)
             .map(response => { return response.json().photos.photo })
-            .catch(this.handleError);
+            .catch(error => Observable.throw(error));
     }
 
     public getPhotoInfo(photoId: number): Observable<GetInfoResponse> {
@@ -27,12 +27,7 @@ export class FlickrService {
                 let photo = response.json().photo;
                 return photo;
             })
-            .catch(this.handleError);
-    }
-
-    public handleError(error: Response) {
-        console.log(error);
-        return Observable.throw(error);
+            .catch(error => Observable.throw(error));
     }
     
 }
