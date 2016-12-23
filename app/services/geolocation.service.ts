@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-var geolocation = require("nativescript-geolocation");
+import * as geolocation from "nativescript-geolocation";
 var humanizeDistance = require("humanize-distance");
 
 @Injectable()

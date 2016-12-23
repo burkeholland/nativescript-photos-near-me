@@ -14,7 +14,6 @@ export class ImagesListComponent {
     private mapbox: any;
     public mapboxKey: string;
     public photos: PhotosSearchResponse[];
-    public progress: number = 0;
 
     constructor(private flickrService: FlickrService, private geolocationService: GeolocationService, private zone: NgZone, private router: Router) {
         this.mapboxKey = Config.MapBox.ACCESS_TOKEN;
@@ -68,7 +67,7 @@ export class ImagesListComponent {
 
     public showPhoto(args: any) {
         let photo = this.photos[args.index];
-        this.router.navigate(["/image-component", photo.id, photo.owner]);
+        this.router.navigate(["/image-component", photo.id]);
     }
 
     public loadPhotos() {

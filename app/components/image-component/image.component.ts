@@ -13,9 +13,7 @@ export class ImageComponent implements OnInit {
 
     public ngOnInit() {
         this.activatedRoute.params.subscribe(params => {
-            let userId = params["user_id"];
             let photoId = params["photo_id"];
-
             this.getPhoto(photoId);
         });
     }

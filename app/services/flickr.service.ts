@@ -15,7 +15,7 @@ export class FlickrService {
         let url = `${Config.Flickr.API_URL}method=flickr.photos.search&api_key=${Config.Flickr.CLIENT_ID}&content_type=1&lat=${lat}&lon=${lon}&extras=url_q,geo&format=json&nojsoncallback=1`;
 
         return this.http.get(url)
-            .map(response => { return response.json().photos.photo })
+            .map(response => response.json().photos.photo)
             .catch(error => Observable.throw(error));
     }
 
@@ -23,10 +23,7 @@ export class FlickrService {
         let url = `${Config.Flickr.API_URL}method=flickr.photos.getInfo&api_key=${Config.Flickr.CLIENT_ID}&photo_id=${photoId}&format=json&nojsoncallback=1`;
 
         return this.http.get(url)
-            .map(response => {
-                let photo = response.json().photo;
-                return photo;
-            })
+            .map(response => response.json().photo)
             .catch(error => Observable.throw(error));
     }
     

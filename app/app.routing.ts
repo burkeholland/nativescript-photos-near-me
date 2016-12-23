@@ -3,7 +3,7 @@ import { ImageComponent } from "./components/image-component/image.component";
 
 export const routes = [
     { path: "", component: ImagesListComponent },
-    { path: "image-component/:photo_id/:user_id", component: ImageComponent },
+    { path: "image-component/:photo_id", component: ImageComponent },
 ];
 
 export const navigatableComponents = [
