@@ -13,11 +13,15 @@ export class GeolocationService {
             (resolve, reject) => {
                 if (!geolocation.isEnabled()) {
                     geolocation.enableLocationRequest().then(() => {
-                        resolve(this._getCurrentLocation());
+                        this._getCurrentLocation()
+                            .then(resolve)
+                            .catch(reject);
                     });
                 }
                 else {
-                    resolve(this._getCurrentLocation());
+                        this._getCurrentLocation()
+                            .then(resolve)
+                            .catch(reject);
                 }
             }
         );
