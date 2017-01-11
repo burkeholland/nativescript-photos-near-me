@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import * as geolocation from "nativescript-geolocation";
+import { Accuracy } from "ui/enums";
 var humanizeDistance = require("humanize-distance");
 
 @Injectable()
@@ -30,7 +31,10 @@ export class GeolocationService {
     private _getCurrentLocation(): Promise<any> {
         return new Promise(
             (resolve, reject) => {
-                geolocation.getCurrentLocation({ timeout: 20000 })
+                geolocation.getCurrentLocation({
+                    desiredAccuracy: Accuracy.high,
+                    timeout: 20000
+                })
                 .then(location => {
 
                     this.latitude = location.latitude;
